@@ -22,7 +22,7 @@ class MCP3008Sensors:
     def __init__(
         self,
         *,
-        r_shunt=150.0,
+        r_shunt=180.0,
         wind_v_supply=5.0,
         volt_div_top=1000.0, 
         volt_div_bot=2000.0,  

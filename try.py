@@ -17,12 +17,14 @@ from modbus_sensors import ModbusRTUBus, SN522, SQ522
 # get adjustment value from the function below and add it to code
 # print(adc.calibrate_zero_wind_adjustment())
 
-spec = StellarNetSpectrometer()
-print(spec.read())
-spec.close()
-
 # Modbus RTU bus (one shared UART) + two slaves
 # bus = ModbusRTUBus()
 # sn522 = SN522(bus)  # net radiometer
 # print(sn522.take_measurement())
 # bus.close()
+
+# spec = StellarNetSpectrometer()
+# aquire black spectrum and save file 
+# spec.acquire_dark()
+# spec.save_dark_txt()
+# spec.close()
