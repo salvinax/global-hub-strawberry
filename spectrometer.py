@@ -42,7 +42,7 @@ class StellarNetSpectrometer:
         self.DARK_PATH = "/home/syd/Desktop/global-hub/dark_spectra/dark_ch0_int50ms.txt"
 
         # LOAD dark spectrum
-        self.load_dark_txt(self.DARK_PATH)
+        # self.load_dark_txt(self.DARK_PATH)
 
 
     # get raw x and y data from spectrometer
@@ -185,24 +185,28 @@ class StellarNetSpectrometer:
         raw_y = raw_xy[:, 1]
 
 
-        corrected_y = raw_y - self.dark_counts
-        corrected_y[corrected_y < 0] = 0.0
+        # corrected_y = raw_y - self.dark_counts
+        # corrected_y[corrected_y < 0] = 0.0
 
-        calibrated_y = self.getWattsY(
-            spectrometerWavelength=x_nm,
-            rawSampleDataY=raw_y,
-            rawDarkDataY=self.dark_counts,
-            rawSampleDataCapturedIntegrationTimeInMS=self.inttime_ms,
-            calibrationFilePath= self.CAL_PATH,
-            aperturePercentage=self.aperturePercentage)
+        # calibrated_y = self.getWattsY(
+        #     spectrometerWavelength=x_nm,
+        #     rawSampleDataY=raw_y,
+        #     rawDarkDataY=self.dark_counts,
+        #     rawSampleDataCapturedIntegrationTimeInMS=self.inttime_ms,
+        #     calibrationFilePath= self.CAL_PATH,
+        #     aperturePercentage=self.aperturePercentage)
 
-        watts_y = np.asarray(cal_out["Y"], dtype=float)
-
+        # watts_y = np.asarray(cal_out["Y"], dtype=float)
         return {
             "wavelength_nm": x_nm,
-            "corrected_y": corrected_y,
-            "calibrated_y": watts_y
+            "raw_y": raw_y
+
         }
+        # return {
+        #     "wavelength_nm": x_nm,
+        #     "corrected_y": corrected_y,
+        #     "calibrated_y": watts_y
+        # }
 
 
     def close(self) -> None:

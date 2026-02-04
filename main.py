@@ -19,10 +19,11 @@ from i2c_sensors import I2CSensors
 from modbus_sensors import ModbusRTUBus, SN522, SQ522
 from spectrometer import StellarNetSpectrometer
 
-BUCKET_NAME = "strawberry-lysimeter-data"
-DEVICE_ID = "strawberry-globalpcb-01"
-TZ_NAME = "America/New_York"
+BUCKET_NAME = "strawberry-lysimeter-data1"
 S3_PREFIX = "telemetry"
+DEVICE_ID = "global01"
+
+TZ_NAME = "America/New_York"
 
 POLL_PERIOD_S = 30.0
 
@@ -37,7 +38,9 @@ def now_local() -> datetime:
 
 def hour_key(dt: datetime) -> str:
     # YYYY-MM-DD_HH
+#    return dt.strftime("%M")
     return dt.strftime("%Y-%m-%d_%H")
+
 
 # convert to json
 def json_default(o):
@@ -61,6 +64,12 @@ def append_payload(payload: dict, hk: str) -> None:
     with open(path, "a", encoding="utf-8") as f:
         f.write(line + "\n")
 
+def upload_backlog(s3_client, current_hk: str) -> None:
+    for path in sorted(SPOOL_DIR.glob(f"{DEVICE_ID}_*.jsonl")):
+        hk = path.stem.replace(f"{DEVICE_ID}_", "")
+        if hk != current_hk:  # don't upload the active hour file
+            try_upload_hour(s3_client, hk)
+            print('uploaded')
 
 def try_upload_hour(s3_client, hk: str) -> bool:
     """
@@ -79,6 +88,7 @@ def try_upload_hour(s3_client, hk: str) -> bool:
         s3_client.upload_file(str(path), BUCKET_NAME, key)
         path.rename(SENT_DIR / path.name)  # archive so no re-upload
         print(f"[S3] uploaded {path.name} -> s3://{BUCKET_NAME}/{key}")
+        # upload backlog
         return True
 
     except Exception as e:
@@ -116,17 +126,21 @@ def main():
     current_hk = hour_key(now_local())
     to_upload_hk: Optional[str] = None
 
-    # LOOP
+	    # upload backlog
+    upload_backlog(s3, current_hk)
+    
     while True:
         dt = now_local()
         hk = hour_key(dt)
+        #hk = int(hour_key(dt))
 
         if hk != current_hk:
+        #if hk % 5 == 0:
             to_upload_hk = current_hk
             current_hk = hk
 
         if to_upload_hk is not None:
-            if try_upload_hour(s3_client, to_upload_hk):
+            if try_upload_hour(s3, to_upload_hk):
                 to_upload_hk = None  # uploaded successfully
 
         # Read all sensors
@@ -134,7 +148,7 @@ def main():
         i2c_result = safe_call("i2c", i2c_sensors.take_measurement)
         sn_result = safe_call("sn522", sn522.take_measurement)
         sq_result = safe_call("sq522", sq522.take_measurement)
-        spec_result = safe_call("spectrometer", spec.read)
+        spec_result = safe_call("spectrometer", spec.take_measurement)
 
         payload = {
             "est-timestamp": dt.isoformat(),
@@ -146,6 +160,7 @@ def main():
             "spectrometer": spec_result
         }
         
+     
         # save payload to local file 
         append_payload(payload, current_hk)
 

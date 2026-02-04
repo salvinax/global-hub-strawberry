@@ -1,5 +1,5 @@
 # Test Script for I2C Sensors (scd41- co2/temperature/humidity)
-# from mcp3008_sensors import MCP3008Sensors
+from mcp3008_sensors import MCP3008Sensors
 from i2c_sensors import I2CSensors
 from spectrometer import StellarNetSpectrometer
 from modbus_sensors import ModbusRTUBus, SN522, SQ522
@@ -12,9 +12,9 @@ from modbus_sensors import ModbusRTUBus, SN522, SQ522
 # i2c_sensors.stop()
 # i2c_sensors.reset_i2c_bus()
 
-# adc = MCP3008Sensors()
-# print(adc.take_measurement())
-# get adjustment value from the function below and add it to code
+adc = MCP3008Sensors()
+print(adc.take_measurement())
+# #get adjustment value from the function below and add it to code
 # print(adc.calibrate_zero_wind_adjustment())
 
 # Modbus RTU bus (one shared UART) + two slaves
@@ -24,7 +24,8 @@ from modbus_sensors import ModbusRTUBus, SN522, SQ522
 # bus.close()
 
 # spec = StellarNetSpectrometer()
-# aquire black spectrum and save file 
+# print(spec.take_measurement())
+#aquire black spectrum and save file 
 # spec.acquire_dark()
 # spec.save_dark_txt()
 # spec.close()
