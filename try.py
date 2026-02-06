@@ -12,8 +12,8 @@ from modbus_sensors import ModbusRTUBus, SN522, SQ522
 # i2c_sensors.stop()
 # i2c_sensors.reset_i2c_bus()
 
-adc = MCP3008Sensors()
-print(adc.take_measurement())
+# adc = MCP3008Sensors()
+# print(adc.take_measurement())
 # #get adjustment value from the function below and add it to code
 # print(adc.calibrate_zero_wind_adjustment())
 
@@ -22,6 +22,11 @@ print(adc.take_measurement())
 # sn522 = SN522(bus)  # net radiometer
 # print(sn522.take_measurement())
 # bus.close()
+
+
+
+
+
 
 # spec = StellarNetSpectrometer()
 # print(spec.take_measurement())

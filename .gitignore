@@ -28,6 +28,10 @@ htmlcov/
 *.csv
 *.jsonl
 *.gz
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
 
 # Secrets (common)
 .env
@@ -35,6 +39,4 @@ htmlcov/
 *.pem
 *.key
 
-# Raspberry Pi / misc
-.spool/
-spool/
+

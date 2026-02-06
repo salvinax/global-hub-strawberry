@@ -1,4 +1,5 @@
-from stellarnet_driverLibs import stellarnet_driver3 as sn
+from stellarnet_driverLibs import stellarnet_driver3 as sn 
+
 from typing import Any, Dict
 import os
 import numpy as np
@@ -198,7 +199,8 @@ class StellarNetSpectrometer:
 
         # watts_y = np.asarray(cal_out["Y"], dtype=float)
         return {
-            "wavelength_nm": x_nm,
+        # x is always same
+         #   "wavelength_nm": x_nm,
             "raw_y": raw_y
 
         }

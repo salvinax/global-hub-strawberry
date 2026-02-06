@@ -107,10 +107,10 @@ class SN522:
             "lw_net_w": longwave_net_watts,
             "net_total_w": total_net_radiation,
             "albedo": albedo,
-            "sw_up_mv": shortwave_up_mv,
-            "sw_down_mv": shortwave_down_mv,
-            "lw_up_mv": longwave_up_mv,
-            "lw_down_mv": longwave_down_mv,
+            # "sw_up_mv": shortwave_up_mv,
+            # "sw_down_mv": shortwave_down_mv,
+            # "lw_up_mv": longwave_up_mv,
+            # "lw_down_mv": longwave_down_mv,
             "lw_up_temp": longwave_up_temperature,
             "lw_down_temp": longwave_down_temperature,
         }
@@ -182,9 +182,9 @@ class SQ522:
 
         return {
             "calibrated_output": calibrated_output,
-            "detector_mv": detector_millivolts,
-            "immersed_output": immersed_output,
-            "solar_output": solar_output,
+            # "detector_mv": detector_millivolts,
+            # "immersed_output": immersed_output,
+            # "solar_output": solar_output,
         }
 
     def read_all_config(self) -> dict:

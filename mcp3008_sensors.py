@@ -102,8 +102,8 @@ class MCP3008Sensors:
         wind_mph = 0.0 if delta_v <= 0 else math.pow(delta_v / self.B, self.C)
 
         return {
-            "wind_mph": wind_mph,
-            "temp_c": tempCtimes100 / 100.0
+            "wind_mph": wind_mph
+            #"temp_c": tempCtimes100 / 100.0
         }
 
     def calibrate_zero_wind_adjustment(self, seconds: float = 20.0, sample_hz: float = 20.0):
@@ -153,8 +153,9 @@ class MCP3008Sensors:
         wind = self.wind_velocity_from_adc_voltages(v_tmp_adc, v_rv_adc)
 
         return {
-            "sq214_0": {"ppfd": ppfd0, "i_ma": i0, "v_adc": v_par0},
-            "sq214_1": {"ppfd": ppfd1, "i_ma": i1, "v_adc": v_par1},
+           # "sq214_0": {"ppfd": ppfd0, "i_ma": i0, "v_adc": v_par0},
+           # "sq214_1": {"ppfd": ppfd1, "i_ma": i1, "v_adc": v_par1},
+            "sq214_1": {"ppfd": ppfd1},
             "wind": wind,
         }
 
