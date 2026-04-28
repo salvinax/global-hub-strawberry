@@ -201,7 +201,7 @@ class StellarNetSpectrometer:
         return {
         # x is always same
          #   "wavelength_nm": x_nm,
-            "raw_y": raw_y
+            "raw_y": raw_y.tolist()
 
         }
         # return {

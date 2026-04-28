@@ -25,7 +25,10 @@ BLE_NOTIFY_UUID = os.getenv("BLE_NOTIFY_UUID", "")      # Nordic -> Pi notificat
 BLE_TIME_UUID   = os.getenv("BLE_TIME_UUID", "")        # Pi -> Nordic write for time sync (required for time sync)
 
 # Nordic payload parsing
-NODE_NAME_LENGTH = 8
+
+NODE_NAME_LENGTH = int(os.getenv("NODE_NAME_LENGTH", "8"))
+DEVICE_ID = os.getenv("DEVICE_ID", "pi-gateway-1")
+
 node_name = ""
 # Scheduling / time sync target
 PUMP_TARGET_HHMM = os.getenv("PUMP_TARGET_HHMM", "23:00")    # default 11pm
@@ -145,7 +148,6 @@ def decode_sensor_payload_v1(data: bytes, node_name_len: int) -> Dict[str, Any]:
     }
 
 
-DEVICE_ID = "pi-gateway-1"
 sensor_stack = None
 
 # call functions through this function
@@ -162,19 +164,19 @@ def init_sensors_once():
         return sensor_stack
 
     
-    # i2c_sensors = I2CSensors()
-    # adc = MCP3008Sensors()
-    # bus = ModbusRTUBus()
-    # sn522 = SN522(bus, addr=1)
-    # sq522 = SQ522(bus, addr=5)
-    # spec = StellarNetSpectrometer()
+    i2c_sensors = I2CSensors()
+    adc = MCP3008Sensors()
+    bus = ModbusRTUBus()
+    sn522 = SN522(bus, addr=1)
+    sq522 = SQ522(bus, addr=5)
+    spec = StellarNetSpectrometer()
 
-    # placeholder for testing:
-    i2c_sensors = None
-    adc = None
-    sn522 = None
-    sq522 = None
-    spec = None
+    # # placeholder for testing:
+    # i2c_sensors = None
+    # adc = None
+    # sn522 = None
+    # sq522 = None
+    # spec = None
 
     sensor_stack = dict(i2c=i2c_sensors, adc=adc, sn522=sn522, sq522=sq522, spec=spec)
     return sensor_stack
@@ -185,20 +187,18 @@ def read_local_sensors_blocking() -> Dict[str, Any]:
     dt = datetime.now().astimezone()
 
     # Replace these with your real calls once you wire objects above:
-    # mcp_result  = safe_call("mcp3008",      s["adc"].take_measurement)
-    # i2c_result  = safe_call("i2c",          s["i2c"].take_measurement)
-    # sn_result   = safe_call("sn522",        s["sn522"].take_measurement)
-    # sq_result   = safe_call("sq522",        s["sq522"].take_measurement)
-    # spec_result = safe_call("spectrometer", s["spec"].take_measurement)
+    mcp_result  = safe_call("mcp3008",      s["adc"].take_measurement)
+    i2c_result  = safe_call("i2c",          s["i2c"].take_measurement)
+    sn_result   = safe_call("sn522",        s["sn522"].take_measurement)
+    sq_result   = safe_call("sq522",        s["sq522"].take_measurement)
+    spec_result = safe_call("spectrometer", s["spec"].take_measurement)
 
     # placeholder for testing:
-    mcp_result = {"todo": "hook MCP3008Sensors"}
-    i2c_result = {"todo": "hook I2CSensors"}
-    sn_result  = {"todo": "hook SN522"}
-    sq_result  = {"todo": "hook SQ522"}
-    spec_result= {"todo": "hook StellarNetSpectrometer"}
-
-    
+    # mcp_result = {"todo": "hook MCP3008Sensors"}
+    # i2c_result = {"todo": "hook I2CSensors"}
+    # sn_result  = {"todo": "hook SN522"}
+    # sq_result  = {"todo": "hook SQ522"}
+    # spec_result= {"todo": "hook StellarNetSpectrometer"}
 
     return {
         "est-timestamp": dt.isoformat(),
@@ -270,7 +270,7 @@ async def find_device_address() -> str:
 async def send_time_sync(client: BleakClient):
     """
     look at Zephyr time_sync_write():
-      len must be 10
+      len must be 14
       epoch_s  = le32 @ [0]
       epoch_ms = le16 @ [4]
       next_pump_epoch_s = le32 @ [6]
@@ -285,7 +285,6 @@ async def send_time_sync(client: BleakClient):
     e_s = epoch_s()
     e_ms = epoch_ms_part()
     next_pump = next_target_epoch_s(PUMP_TARGET_HHMM)
-    next_pump = next_target_epoch_s("23:05")
 
     pkt = struct.pack("<IHIHH", e_s, e_ms, next_pump, PUMP_PERIOD_S, NODE_PERIOD_S)
 
